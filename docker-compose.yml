@@ -1,0 +1,35 @@
+version: '3'
+services:
+
+  happydb:
+    container_name: happydb
+    image: postgres:11.1
+    environment:
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: simpleapi
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - happynet
+
+  happyweb:
+    container_name: happyweb
+    build:
+      context: .
+      dockerfile: devenv/web/Dockerfile
+    environment:
+      DJANGO_SETTINGS_MODULE: simpleproject.settings.simpleapisettings
+    volumes:
+      - ./src:/src
+    networks:
+      - happynet
+    ports:
+        - "9000:9000"
+    command:
+        manage.py runserver 0.0.0.0:9000
+
+volumes:
+  pgdata:
+
+networks:
+    happynet:
